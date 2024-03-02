@@ -9,7 +9,7 @@ const collection_url = "https://boardgamegeek.com/xmlapi2/collection?excludesubt
 function App() {
   const [collection, setCollection] = useState(null);
   const [wheelProps, setWheelProps] = useState(null);
-  const [username, setUsername] = useState("fowlinbasket");
+  const [username, setUsername] = useState("");
   const [minPlayers, setMinPlayers] = useState(0);
   const [maxPlayers, setMaxPlayers] = useState(0);
   // const [minComplexity, setMinComplexity] = useState(0);
@@ -32,10 +32,10 @@ function App() {
 
   const wheelFilter = (item) => {
     const result = (
-      (item.stats["@minplayers"] >= minPlayers)
-      && (item.stats["@minplayers"] <= maxPlayers || maxPlayers == 0)
-      && (item.stats["@playingtime"] >= minPlaytime)
-      && (item.stats["@playingtime"] <= maxPlaytime || maxPlaytime == 0)
+      (parseInt(item.stats["@maxplayers"]) >= parseInt(minPlayers))
+      && (maxPlayers ? (parseInt(item.stats["@minplayers"]) <= parseInt(maxPlayers)) : true)
+      && (parseInt(item.stats["@playingtime"]) >= parseInt(minPlaytime))
+      && (maxPlaytime ? (parseInt(item.stats["@playingtime"]) <= parseInt(maxPlaytime)) : true)
     );
     return result;
   };
@@ -54,7 +54,6 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(wheelProps);
   }, [wheelProps]);
 
   return (
@@ -63,68 +62,74 @@ function App() {
       <form className='username-form'>
         <label>
           BoardGameGeek Username
-          
+          <br/>
           <input 
             type='text'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             />
         </label>
-        
+        <br/>
         <button type='button' onClick={() => getCollection(username)}>
           Get Collection
         </button>
       </form>
-      
+      <br/>
       {collection &&
         <form className='filter-form'>
           <label>
             Minimum Players
-            
+            <br/>
             <input 
               type='number'
               min={0}
+              onEmptied={(e) => setMinPlayers(0)}
               value={minPlayers}
               onChange={(e) => setMinPlayers(e.target.value)}
               />
           </label>
-          
+          <br/>
           <label>
             Maximum Players
-            
+            <br/>
             <input 
               type='number'
               min={0}
+              onEmptied={(e) => setMaxPlayers(0)}
               value={maxPlayers}
               onChange={(e) => setMaxPlayers(e.target.value)}
               />
           </label>
-          
+          <br/>
           <label>
-            Minimum Playtime
-            
+            Minimum Playtime (Minutes)
+            <br/>
             <input 
               type='number'
               min={0}
+              onEmptied={(e) => setMinPlaytime(0)}
               value={minPlaytime}
               onChange={(e) => setMinPlaytime(e.target.value)}
               />
           </label>
-          
+          <br/>
           <label>
-            Maximum Playtime
-            
+            Maximum Playtime (Minutes)
+            <br/>
             <input 
               type='number'
               min={0}
+              onEmptied={(e) => setMaxPlaytime(0)}
               value={maxPlaytime}
               onChange={(e) => setMaxPlaytime(e.target.value)}
               />
           </label>
-          
-          <button type='button'onClick={() => makeWheelProps()}>
-            Apply Filters
-          </button>
+          <br/>
+          {wheelProps ? 
+            <button type='button' onClick={() => setWheelProps(null)}>Reset Wheel</button>
+            :
+            <button type='button' onClick={() => {makeWheelProps();}}>Apply Filters</button>
+          }
         </form>
       }
       </div>
