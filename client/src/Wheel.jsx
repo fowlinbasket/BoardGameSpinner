@@ -1,31 +1,28 @@
-import { useEffect, useState } from "react";
+import React, { Component } from 'react'
 import WheelComponent from 'react-wheel-of-prizes';
 
-export function SpinWheel(props) {
-    const [winner, setWinner] = useState("");
+export class SpinWheel extends Component {
+    constructor(props) {
+        super();
+        this.props = props;
+    }
 
-    const onFinished = (result) => {
-        setWinner(result);
-    };
-
-    useEffect(() => {
-        console.log(winner);
-    }, [winner]);
-
-    return (
-        <>
-            <WheelComponent
-                segments={props.segments}
-                segColors={props.segColors}
-                onFinished={(winner) => onFinished(winner)}
-                primaryColor='black'
-                contrastColor='white'
-                buttonText='Spin'
-                isOnlyOnce={false}
-                size={290}
-                upDuration={100}
-                downDuration={1000}
-            />
-        </>
-      )
+    render() {
+        return (
+            <>
+                <WheelComponent
+                    segments={this.props.segments}
+                    segColors={this.props.segColors}
+                    onFinished={winner => console.log(winner)}
+                    primaryColor='black'
+                    contrastColor='blue'
+                    buttonText='Spin'
+                    isOnlyOnce={false}
+                    size={290}
+                    upDuration={0}
+                    downDuration={300}
+                />
+            </>
+        )
+    }
 } 
