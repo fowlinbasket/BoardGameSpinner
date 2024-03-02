@@ -9,7 +9,7 @@ const collection_url = "https://boardgamegeek.com/xmlapi2/collection?excludesubt
 function App() {
   const [collection, setCollection] = useState(null);
   const [wheelProps, setWheelProps] = useState(null);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("fowlinbasket");
   const [minPlayers, setMinPlayers] = useState(0);
   const [maxPlayers, setMaxPlayers] = useState(0);
   // const [minComplexity, setMinComplexity] = useState(0);
@@ -26,6 +26,7 @@ function App() {
       .then(xml => xml2json(xml, ""))
       .then(json => JSON.parse(json))
       .then(collectionData => setCollection(collectionData.items.item))
+      .catch(exception => alert("bgg user " + username + " was not found"))
       .finally(console.log("done"));
   }
 
@@ -36,12 +37,6 @@ function App() {
       && (item.stats["@playingtime"] >= minPlaytime)
       && (item.stats["@playingtime"] <= maxPlaytime || maxPlaytime == 0)
     );
-    if (result) {
-      console.log(item);
-      console.log(item.stats["@maxplayers"]);
-      console.log(maxPlayers);
-      console.log(item.stats["@maxplayers"] <= maxPlayers);
-    }
     return result;
   }
 
@@ -70,59 +65,75 @@ function App() {
 
   return (
     <>
+      <div className='forms'>
       <form className='username-form'>
         <label>
-          Enter a username to fetch a collection from
+          BoardGameGeek Username
+          
           <input 
             type='text'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             />
         </label>
+        
         <button type='button' onClick={() => getCollection(username)}>
           Get Collection
         </button>
       </form>
-      <br/>
+      
       {collection &&
         <form className='filter-form'>
           <label>
             Minimum Players
+            
             <input 
               type='number'
+              min={0}
               value={minPlayers}
               onChange={(e) => setMinPlayers(e.target.value)}
               />
           </label>
+          
           <label>
             Maximum Players
+            
             <input 
               type='number'
+              min={0}
               value={maxPlayers}
               onChange={(e) => setMaxPlayers(e.target.value)}
               />
           </label>
+          
           <label>
             Minimum Playtime
+            
             <input 
               type='number'
+              min={0}
               value={minPlaytime}
               onChange={(e) => setMinPlaytime(e.target.value)}
               />
           </label>
+          
           <label>
             Maximum Playtime
+            
             <input 
               type='number'
+              min={0}
               value={maxPlaytime}
               onChange={(e) => setMaxPlaytime(e.target.value)}
               />
           </label>
+          
           <button type='button'onClick={() => makeWheelProps()}>
             Apply Filters
           </button>
         </form>
       }
+      </div>
       <div className='wheel'>
         {wheel && 
           wheel.render()

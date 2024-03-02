@@ -1,7 +1,7 @@
 #root {
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
   text-align: center;
 }
 
@@ -39,4 +39,23 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.forms {
+  width: 60%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-flexbox;
+  box-sizing: border-box;
+  text-align: left;
+}
+.forms > * {
+  padding: 12px 20px;
+  margin: 8px 0;
+}
+
+.wheel {
+  width: 50%;
+  display: inline-flex;
+  text-align: center;
 }
