@@ -38,7 +38,7 @@ function App() {
       && (item.stats["@playingtime"] <= maxPlaytime || maxPlaytime == 0)
     );
     return result;
-  }
+  };
 
   const makeWheelProps = () => {
     if (collection) {
@@ -51,17 +51,11 @@ function App() {
       }
       setWheelProps({segments, segColors});
     }
-  }
+  };
 
   useEffect(() => {
     console.log(wheelProps);
-    if (wheelProps) {
-      setWheel(new SpinWheel(wheelProps));
-    }
-  }, [wheelProps])
-
-  useEffect(() => {
-  }, [wheel, wheelProps])
+  }, [wheelProps]);
 
   return (
     <>
@@ -135,8 +129,19 @@ function App() {
       }
       </div>
       <div className='wheel'>
-        {wheel && 
-          wheel.render()
+        {wheelProps &&
+          <WheelComponent
+            segments={wheelProps.segments}
+            segColors={wheelProps.segColors}
+            onFinished={winner => console.log(winner)}
+            primaryColor='black'
+            contrastColor='blue'
+            buttonText='Spin'
+            isOnlyOnce={false}
+            size={290}
+            upDuration={0}
+            downDuration={300}
+          />
         }
       </div>
     </>
