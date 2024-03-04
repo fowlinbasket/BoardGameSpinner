@@ -4,7 +4,7 @@ import WheelComponent from 'react-wheel-of-prizes';
 import { SpinWheel } from './Wheel';
 import './App.css';
 
-const collection_url = "https://boardgamegeek.com/xmlapi2/collection?excludesubtype=boardgameexpansion&stats=1&own=1&username=";
+const collection_url = "https://boardgamegeek.com/xmlapi2/collection?stats=1&own=1";
 
 function App() {
   const [collection, setCollection] = useState(null);
@@ -16,11 +16,12 @@ function App() {
   // const [maxComplexity, setMaxComplexity] = useState(5);
   const [minPlaytime, setMinPlaytime] = useState(0);
   const [maxPlaytime, setMaxPlaytime] = useState(0);
+  const [includeExpansions, setIncludeExpansions] = useState(false);
   const [wheel, setWheel] = useState(null);
   const [useWeights, setUseWeights] = useState(false);
 
   async function getCollection(username) {
-    const getCollectionData = await fetch(collection_url + username)
+    const getCollectionData = await fetch(collection_url + "&username=" + username + (includeExpansions ? "" : "&excludesubtype=boardgameexpansion"))
       .then(response => response.text())
       .then(xmlString => new DOMParser().parseFromString(xmlString, 'text/xml'))
       .then(xml => xml2json(xml, ""))
@@ -54,7 +55,15 @@ function App() {
   };
 
   useEffect(() => {
+    console.log(collection);
+  }, [collection]);
+
+  useEffect(() => {
   }, [wheelProps]);
+
+  useEffect(() => {
+    console.log(includeExpansions);
+  }, [includeExpansions]);
 
   return (
     <>
@@ -68,6 +77,11 @@ function App() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             />
+        </label>
+        <br/>
+        <label>
+          Include Expansions
+          <input type='checkbox' name="excludesubtype" value="boardgameexpansion" onChange={e => setIncludeExpansions(e.target.checked)}/>
         </label>
         <br/>
         <button type='button' onClick={() => getCollection(username)}>
