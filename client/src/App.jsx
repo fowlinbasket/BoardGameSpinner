@@ -34,9 +34,9 @@ function App() {
   const wheelFilter = (item) => {
     const result = (
       (parseInt(item.stats["@maxplayers"]) >= parseInt(minPlayers))
-      && (maxPlayers ? (parseInt(item.stats["@minplayers"]) <= parseInt(maxPlayers)) : true)
+      && (parseInt(maxPlayers) > 0 ? (parseInt(item.stats["@minplayers"]) <= parseInt(maxPlayers)) : true)
       && (parseInt(item.stats["@playingtime"]) >= parseInt(minPlaytime))
-      && (maxPlaytime ? (parseInt(item.stats["@playingtime"]) <= parseInt(maxPlaytime)) : true)
+      && (parseInt(maxPlaytime) > 0 ? (parseInt(item.stats["@playingtime"]) <= parseInt(maxPlaytime)) : true)
     );
     return result;
   };
