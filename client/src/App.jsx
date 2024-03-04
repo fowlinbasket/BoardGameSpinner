@@ -22,6 +22,7 @@ function App() {
 
   async function getCollection(username) {
     let collectionData = [];
+
     const getCollectionData = await fetch(collection_url + "&username=" + username + "&excludesubtype=boardgameexpansion")
       .then(response => response.text())
       .then(xmlString => new DOMParser().parseFromString(xmlString, 'text/xml'))
@@ -31,16 +32,15 @@ function App() {
       .catch(exception => alert("bgg user " + username + " was not found"))
       .finally(console.log("done"));
 
-    if (includeExpansions) {
-      const expansions = await fetch(collection_url + "&username=" + username + "&subtype=boardgameexpansion")
-      .then(response => response.text())
-      .then(xmlString => new DOMParser().parseFromString(xmlString, 'text/xml'))
-      .then(xml => xml2json(xml, ""))
-      .then(json => JSON.parse(json))
-      .then(data => collectionData = [...collectionData, ...data.items.item])
-      .catch(exception => alert("bgg user " + username + " was not found"))
-      .finally(console.log("done"));
-    }
+    const expansions = await fetch(collection_url + "&username=" + username + "&subtype=boardgameexpansion")
+    .then(response => response.text())
+    .then(xmlString => new DOMParser().parseFromString(xmlString, 'text/xml'))
+    .then(xml => xml2json(xml, ""))
+    .then(json => JSON.parse(json))
+    .then(data => collectionData = [...collectionData, ...data.items.item])
+    .catch(exception => alert("bgg user " + username + " was not found"))
+    .finally(console.log("done"));
+
     setCollection(collectionData);
   }
 
@@ -50,6 +50,7 @@ function App() {
       && (parseInt(maxPlayers) > 0 ? (parseInt(item.stats["@minplayers"]) <= parseInt(maxPlayers)) : true)
       && (parseInt(item.stats["@playingtime"]) >= parseInt(minPlaytime))
       && (parseInt(maxPlaytime) > 0 ? (parseInt(item.stats["@playingtime"]) <= parseInt(maxPlaytime)) : true)
+      && (includeExpansions ? true : item["@subtype"] != "boardgameexpansion")
     );
     return result;
   };
@@ -96,11 +97,6 @@ function App() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             />
-        </label>
-        <br/>
-        <label>
-          Include Expansions
-          <input type='checkbox' name="excludesubtype" value="boardgameexpansion" onChange={e => setIncludeExpansions(e.target.checked)}/>
         </label>
         <br/>
         <button type='button' onClick={() => getCollection(username)}>
@@ -156,6 +152,11 @@ function App() {
               value={maxPlaytime}
               onChange={(e) => setMaxPlaytime(e.target.value)}
               />
+          </label>
+        <br/>
+          <label>
+            Include Expansions
+            <input type='checkbox' name="excludesubtype" value="boardgameexpansion" onChange={e => setIncludeExpansions(e.target.checked)}/>
           </label>
           <br/>
           {wheelProps ? 
