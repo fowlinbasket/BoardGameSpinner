@@ -1,5 +1,5 @@
 import { useEffect, useState, ReactDOM } from 'react';
-import { xml2json } from './util';
+import { xml2json, shuffle } from './util';
 import WheelComponent from 'react-wheel-of-prizes';
 import { SpinWheel } from './Wheel';
 import './App.css';
@@ -48,9 +48,14 @@ function App() {
       let filteredCollection = collection.filter(item => wheelFilter(item));
       for (let item of filteredCollection) {
         segments.push(item.name["#text"]);
-        segColors.push("#FFFFFF");
+        segColors.push("#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);}));
       }
-      setWheelProps({segments, segColors});
+      if (segments.length == 0) {
+        alert("No board games found that meet these criteria")
+      }
+      else {
+        setWheelProps({segments: shuffle(segments), segColors: segColors});
+      }
     }
   };
 
@@ -59,6 +64,7 @@ function App() {
   }, [collection]);
 
   useEffect(() => {
+    console.log(wheelProps);
   }, [wheelProps]);
 
   useEffect(() => {
@@ -154,7 +160,7 @@ function App() {
             segColors={wheelProps.segColors}
             onFinished={winner => console.log(winner)}
             primaryColor='black'
-            contrastColor='blue'
+            contrastColor='white'
             buttonText='Spin'
             isOnlyOnce={false}
             size={290}
