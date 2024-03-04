@@ -21,14 +21,27 @@ function App() {
   const [useWeights, setUseWeights] = useState(false);
 
   async function getCollection(username) {
-    const getCollectionData = await fetch(collection_url + "&username=" + username + (includeExpansions ? "" : "&excludesubtype=boardgameexpansion"))
+    let collectionData = [];
+    const getCollectionData = await fetch(collection_url + "&username=" + username + "&excludesubtype=boardgameexpansion")
       .then(response => response.text())
       .then(xmlString => new DOMParser().parseFromString(xmlString, 'text/xml'))
       .then(xml => xml2json(xml, ""))
       .then(json => JSON.parse(json))
-      .then(collectionData => setCollection(collectionData.items.item))
+      .then(data => collectionData = [...collectionData, ...data.items.item])
       .catch(exception => alert("bgg user " + username + " was not found"))
       .finally(console.log("done"));
+
+    if (includeExpansions) {
+      const expansions = await fetch(collection_url + "&username=" + username + "&subtype=boardgameexpansion")
+      .then(response => response.text())
+      .then(xmlString => new DOMParser().parseFromString(xmlString, 'text/xml'))
+      .then(xml => xml2json(xml, ""))
+      .then(json => JSON.parse(json))
+      .then(data => collectionData = [...collectionData, ...data.items.item])
+      .catch(exception => alert("bgg user " + username + " was not found"))
+      .finally(console.log("done"));
+    }
+    setCollection(collectionData);
   }
 
   const wheelFilter = (item) => {
